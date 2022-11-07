@@ -1,3 +1,4 @@
 /* 
 Course on Sequelize ORM for node.js and express. 
+About Node.js
 */
