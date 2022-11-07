@@ -1,0 +1,3 @@
+/* 
+Course on Sequelize ORM for node.js and express. 
+*/
