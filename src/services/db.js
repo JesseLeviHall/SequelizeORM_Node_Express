@@ -1,8 +1,12 @@
+require('dotenv').config();
+
+const dbpass = process.env.MYSQL_PASS;
+
 // instantiate sequelize
 const Sequelize = require('sequelize');
 
 // connect to database
-const sequelize = new Sequelize('node_orm', 'root', 'Gogogon1', {
+const sequelize = new Sequelize('node_orm', 'root', `${dbpass}`, {
 	dialect: 'mysql',
 	host: 'localhost',
 });
