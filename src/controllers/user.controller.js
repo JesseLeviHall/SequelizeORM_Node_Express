@@ -1,4 +1,4 @@
-const db = require('../models/user.model');
+const db = require('../models/usermodel.altmethod');
 
 //adduser
 const addUser = async (req, res) => {
