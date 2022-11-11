@@ -1,36 +1,40 @@
-const Sequelize = require('sequelize');
+const { sequelize } = require('../services/db');
 
-const db = require('../services/db');
+module.exports = (sequelize, DataTypes) => {
+	const User = sequelize.define(
+		'User',
+		{
+			id: {
+				type: DataTypes.INTEGER,
+				primaryKey: true,
+				autoIncrement: true,
+			},
+			name: {
+				type: DataTypes.STRING,
+			},
+			email: {
+				type: DataTypes.STRING,
+				unique: true,
+				allowNull: false,
+			},
+			password: {
+				type: DataTypes.STRING,
+				allowNull: false,
+			},
+			createdAt: {
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+			},
+			updatedAt: {
+				type: Sequelize.DATE,
+				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+			},
+		},
 
-const User = db.sequelize.define('tbl_users', {
-	id: {
-		type: Sequelize.INTEGER,
-		primaryKey: true,
-		autoIncrement: true,
-		allowNull: false,
-	},
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	email: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	password: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	status: {
-		type: Sequelize.ENUM('1', '0'),
-		defaultValue: '1',
-	},
-	createdAt: {
-		type: Sequelize.DATE,
-		defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-	},
-	updatedAt: {
-		type: Sequelize.DATE,
-		defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-	},
-});
+		{
+			timestamps: false,
+		}
+	);
+
+	return User;
+};
