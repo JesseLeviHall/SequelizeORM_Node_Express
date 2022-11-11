@@ -19,6 +19,7 @@ User.init(
 		},
 		name: {
 			type: DataTypes.STRING,
+			allowNull: false,
 		},
 		email: {
 			type: DataTypes.STRING,
@@ -27,7 +28,7 @@ User.init(
 		},
 		password: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
 		status: {
 			type: DataTypes.ENUM('active', 'inactive'),
@@ -49,6 +50,23 @@ User.init(
 );
 
 sequelize.sync();
+
+app.post('/server/signup', async (req, res) => {
+	const { name, email, password } = req.body;
+
+	try {
+		const user = await User.create({
+			name,
+			email,
+			password,
+			status: 'active',
+		});
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json(err);
+		console.log(err);
+	}
+});
 
 app.get('/server', (req, res, next) => {
 	res.json({ message: 'Hello World!' });
