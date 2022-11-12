@@ -11,5 +11,8 @@ const { Model } = require('sequelize');
 class User extends Model {}
 User.init(attributes, options);
 
+Function based:
+const User = sequelize.define('User', attributes, options); 
+
 
 */
