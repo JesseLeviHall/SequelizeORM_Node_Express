@@ -6,4 +6,10 @@ Sequelize is a promise-based ORM for Node.js v4 and up. It supports the dialects
 
 there are two ways to construct a model. Class based or function based. Class worked better for me. 
 
+Class based: 
+const { Model } = require('sequelize');
+class User extends Model {}
+User.init(attributes, options);
+
+
 */
