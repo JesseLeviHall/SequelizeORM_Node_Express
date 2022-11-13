@@ -1,8 +1,8 @@
 const http = require('http');
 const process = require('process');
-const app = require('./src/app');
+const app = require('./app');
 
-const { testConnection } = require('./src/services/db');
+const { testConnection } = require('./services/db');
 
 const PORT = process.env.PORT || 8000;
 
