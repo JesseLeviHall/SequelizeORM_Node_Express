@@ -1,6 +1,7 @@
 const express = require('express');
 const Sequelize = require('sequelize');
 const JWT = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
@@ -59,6 +60,21 @@ const User = sequelize.define(
 );
 
 User.sync();
+
+app.post('/signup', (req, res) => {
+	const { name, email, password } = req.body;
+	try {
+		User.create({
+			name,
+			email,
+			password,
+		});
+		res.status(200).json({ message: 'User created successfully' });
+	} catch (error) {
+		res.status(500).json(err);
+		console.log(err);
+	}
+});
 
 app.get('/', (req, res) => {
 	res.send('Hello World!');
