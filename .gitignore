@@ -1,2 +1,4 @@
 node_modules
 .env
+orm-jwt/node_modules
+orm-jwt/.env
