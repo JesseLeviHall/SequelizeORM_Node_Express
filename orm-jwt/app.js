@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const JWT = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+const asyncHandler = require('express-async-handler');
 
 const app = express();
 
@@ -12,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 const dbpass = process.env.MYSQL_PASS;
 
 // connect to database
-const sequelize = new Sequelize('node_orm', 'root', `${dbpass}`, {
+const sequelize = new Sequelize('orm_jwt', 'root', `${dbpass}`, {
 	dialect: 'mysql',
 	host: 'localhost',
 });
@@ -61,20 +62,26 @@ const User = sequelize.define(
 
 User.sync();
 
-app.post('/signup', (req, res) => {
-	const { name, email, password } = req.body;
-	try {
-		User.create({
-			name,
-			email,
-			password,
-		});
-		res.status(200).json({ message: 'User created successfully' });
-	} catch (error) {
-		res.status(500).json(err);
-		console.log(err);
-	}
-});
+app.post(
+	'/signup',
+	asyncHandler(async (req, res) => {
+		const { name, email, password } = req.body;
+		const plainpass = password.toString();
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(plainpass, salt);
+		try {
+			await User.create({
+				name,
+				email,
+				password: hashedPassword,
+			});
+			res.status(200).json({ message: 'User created successfully' });
+		} catch (error) {
+			res.status(500).json(error);
+			console.log(err);
+		}
+	})
+);
 
 app.get('/', (req, res) => {
 	res.send('Hello World!');
