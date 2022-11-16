@@ -44,6 +44,7 @@ const User = sequelize.define(
 		email: {
 			type: Sequelize.STRING(50),
 			allowNull: false,
+			unique: true,
 		},
 		password: {
 			type: Sequelize.STRING(150),
@@ -69,16 +70,24 @@ app.post(
 		const plainpass = password.toString();
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(plainpass, salt);
-		try {
-			await User.create({
-				name,
-				email,
-				password: hashedPassword,
-			});
-			res.status(200).json({ message: 'User created successfully' });
-		} catch (error) {
-			res.status(500).json(error);
-			console.log(err);
+		const userExists = await User.findOne({
+			where: { email: email },
+		});
+
+		if (!userExists) {
+			try {
+				await User.create({
+					name,
+					email,
+					password: hashedPassword,
+				});
+				res.status(200).json({ message: 'User created successfully' });
+			} catch (error) {
+				res.status(500).json(error);
+				console.log(error);
+			}
+		} else {
+			res.status(400).json({ message: 'User already exists' });
 		}
 	})
 );
