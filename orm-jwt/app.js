@@ -83,10 +83,26 @@ app.post(
 					email,
 					password: hashedPassword,
 				});
-				res.status(200).json({ message: 'User created successfully' });
-			} catch (error) {
-				res.status(500).json(error);
-				console.log(error);
+				//get the new user
+				const newUser = await User.findOne({
+					where: { email: email },
+				});
+				//gen a session token
+				const generateToken = (newUser) => {
+					return JWT.sign({ id: newUser.id }, `${jDubSecret}`, {
+						expiresIn: '3d',
+					});
+				};
+				//return user and login token
+				res.status(200).json({
+					id: newUser.id,
+					name: newUser.name,
+					email: newUser.email,
+					token: generateToken(newUser),
+				});
+			} catch (err) {
+				res.status(500).json(err);
+				console.log(err);
 			}
 		} else {
 			res.status(400).json({ message: 'User already exists' });
