@@ -2,8 +2,8 @@ const express = require('express');
 const Sequelize = require('sequelize');
 const JWT = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-require('dotenv').config();
 const asyncHandler = require('express-async-handler');
+require('dotenv').config();
 
 const app = express();
 
@@ -11,6 +11,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
 const dbpass = process.env.MYSQL_PASS;
+const jDubSecret = process.env.JWT_SECRET;
 
 // connect to database
 const sequelize = new Sequelize('orm_jwt', 'root', `${dbpass}`, {
@@ -63,6 +64,7 @@ const User = sequelize.define(
 
 User.sync();
 
+//signup
 app.post(
 	'/signup',
 	asyncHandler(async (req, res) => {
@@ -88,6 +90,33 @@ app.post(
 			}
 		} else {
 			res.status(400).json({ message: 'User already exists' });
+		}
+	})
+);
+
+//login
+app.post(
+	'/login',
+	asyncHandler(async (req, res) => {
+		const { email, password } = req.body;
+		const user = await User.findOne({
+			where: { email: email },
+		});
+		const generateToken = (user) => {
+			return JWT.sign({ id: user.id }, `${jDubSecret}`, {
+				expiresIn: '3d',
+			});
+		};
+		if (user && (await bcrypt.compare(password, user.password))) {
+			res.status(200).json({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				token: generateToken(user),
+			});
+		} else {
+			res.status(401);
+			throw new Error('Invalid credentials');
 		}
 	})
 );
