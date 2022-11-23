@@ -4,6 +4,7 @@ const JWT = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 require('dotenv').config();
+const jwtConfig = require('./jwt.config');
 
 const app = express();
 
@@ -11,7 +12,6 @@ app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
 const dbpass = process.env.MYSQL_PASS;
-const jDubSecret = process.env.JWT_SECRET;
 
 // connect to database
 const sequelize = new Sequelize('orm_jwt', 'root', `${dbpass}`, {
@@ -89,8 +89,9 @@ app.post(
 				});
 				//gen a session token
 				const generateToken = (newUser) => {
-					return JWT.sign({ id: newUser.id }, `${jDubSecret}`, {
-						expiresIn: '3d',
+					return JWT.sign({ id: newUser.id }, jwtConfig.secret, {
+						expiresIn: jwtConfig.expiresIn,
+						issuer: jwtConfig.issuer,
 					});
 				};
 				//return user and login token
